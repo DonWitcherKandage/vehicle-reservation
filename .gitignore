@@ -1,0 +1,12 @@
+# Maven
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Database credentials
+src/main/resources/database.properties
