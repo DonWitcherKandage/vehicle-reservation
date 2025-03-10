@@ -14,30 +14,23 @@ public class AuthController {
         this.customerDAO = customerDAO;
     }
 
-    /**  Handles user login, returns a `User` object or `null` */
-    public User login(String username, String password) {
+    public User login(String username, String password, String role) {
         try {
-            return userDAO.authenticate(username, password);
+            return userDAO.authenticate(username, password, role);
         } catch (Exception e) {
             System.err.println("Login error: " + e.getMessage());
             return null;
         }
     }
 
-    /**  Handles customer registration and returns a `User` */
-    public User registerCustomer(String userID, String username, String password, String address, String nic, String phone) {
+    public User registerCustomer(String username, String password, String address, String nic, String phone) {
         try {
-            // Create user and customer objects
-            Customer customer = new Customer(userID, username, password, address, nic, phone);
-            
-            // Save to database
-            userDAO.addUser(customer);
+            Customer customer = new Customer("AUTO_GENERATED", username, password, address, nic, phone);
             customerDAO.addCustomer(customer);
-
-            return customer; //  Return the registered user
+            return customer;
         } catch (Exception e) {
             System.err.println("Registration failed: " + e.getMessage());
-            return null; //  Return null if registration fails
+            return null;
         }
     }
 }

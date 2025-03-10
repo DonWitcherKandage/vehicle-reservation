@@ -1,53 +1,46 @@
 package com.megacitycab.dao;
 
 import com.megacitycab.model.User;
-import com.megacitycab.model.Customer;
-import com.megacitycab.model.Manager;
 import com.megacitycab.util.DatabaseManager;
 import java.sql.*;
 
 public class UserDAO {
+    private static final String FIND_USER = "SELECT * FROM users WHERE username = ?";
     private static final String INSERT_USER = 
         "INSERT INTO users (userID, username, password, role) VALUES (?, ?, ?, ?)";
-    private static final String FIND_USER = 
-        "SELECT * FROM users WHERE username = ?";
 
-    /** Adds a new user to the database */
+    /** Generates a unique User ID */
+    private String generateUserID() throws SQLException {
+        String newUserID = "USR" + System.currentTimeMillis(); // Simple unique ID generation
+        return newUserID;
+    }
+
     public void addUser(User user) throws SQLException {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_USER)) {
-            
-            stmt.setString(1, user.getUserID());
-            stmt.setString(2, user.getUserName()); // Fixed getUsername()
+
+            String userID = generateUserID(); //  Auto-generate User ID
+            stmt.setString(1, userID);
+            stmt.setString(2, user.getUserName());
             stmt.setString(3, user.getPassword());
-            stmt.setString(4, (user instanceof Customer) ? "CUSTOMER" : "MANAGER");
+            stmt.setString(4, (user instanceof com.megacitycab.model.Customer) ? "CUSTOMER" : "MANAGER");
             stmt.executeUpdate();
         }
     }
 
-    /** Authenticates a user and returns a `Customer` or `Manager` object */
-    public User authenticate(String username, String password) throws SQLException {
+    public User authenticate(String username, String password, String role) throws SQLException {
+        String query = "SELECT * FROM users WHERE username = ? AND role = ?";
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(FIND_USER)) {
-            
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, username);
+            stmt.setString(2, role);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                String storedPassword = rs.getString("password");
-                String role = rs.getString("role");
-                String userID = rs.getString("userID");
-
-                // Verify password securely
-                if (password.equals(storedPassword)) { // Simple check, hashing recommended
-                    if ("CUSTOMER".equals(role)) {
-                        return new Customer(userID, username, storedPassword, "Default Address", "Default NIC", "Default Phone"); // Fixed constructor
-                    } else if ("MANAGER".equals(role)) {
-                        return new Manager(userID, username, storedPassword, userID);
-                    }
-                }
+            if (rs.next() && rs.getString("password").equals(password)) {
+                return new User(rs.getString("userID"), username, password) {};
             }
-            return null; // Invalid login
         }
+        return null;
     }
 }
