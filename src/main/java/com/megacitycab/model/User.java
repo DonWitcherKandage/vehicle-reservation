@@ -49,7 +49,7 @@ public abstract class User {
             byte[] hashedBytes = md.digest(password.getBytes());
             StringBuilder hexString = new StringBuilder();
             for (byte b : hashedBytes) {
-                hexString.append(String.format("%02x", b));
+                hexString.append("%02x".formatted(b));
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
