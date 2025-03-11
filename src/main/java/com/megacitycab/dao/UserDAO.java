@@ -1,45 +1,61 @@
 package com.megacitycab.dao;
 
+import com.megacitycab.model.Customer;
 import com.megacitycab.model.User;
 import com.megacitycab.util.DatabaseManager;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UserDAO {
-    private static final String FIND_USER = "SELECT * FROM users WHERE username = ?";
-    private static final String INSERT_USER = 
-        "INSERT INTO users (userID, username, password, role) VALUES (?, ?, ?, ?)";
 
-    /** Generates a unique User ID */
-    private String generateUserID() throws SQLException {
-        String newUserID = "USR" + System.currentTimeMillis(); // Simple unique ID generation
-        return newUserID;
-    }
+    // Registers a new customer in the database
+    public void registerCustomer(Customer customer) {
+        String sql = "INSERT INTO users (userId, username, password, role, address, nic, phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    public void addUser(User user) throws SQLException {
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(INSERT_USER)) {
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            String userID = generateUserID(); //  Auto-generate User ID
-            stmt.setString(1, userID);
-            stmt.setString(2, user.getUserName());
-            stmt.setString(3, user.getPassword());
-            stmt.setString(4, (user instanceof com.megacitycab.model.Customer) ? "CUSTOMER" : "MANAGER");
+            stmt.setString(1, customer.getUserId());
+            stmt.setString(2, customer.getUsername());
+            stmt.setString(3, customer.getPassword());
+            stmt.setString(4, customer.getRole());
+            stmt.setString(5, customer.getAddress());
+            stmt.setString(6, customer.getNic());
+            stmt.setString(7, customer.getPhoneNumber());
+
             stmt.executeUpdate();
+            System.out.println("✅ Customer Registered Successfully!");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    public User authenticate(String username, String password, String role) throws SQLException {
-        String query = "SELECT * FROM users WHERE username = ? AND role = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+    // Authenticates User (Customer or Manager)
+    public User login(String username, String password) {
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, username);
-            stmt.setString(2, role);
+            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next() && rs.getString("password").equals(password)) {
-                return new User(rs.getString("userID"), username, password) {};
+            if (rs.next()) {
+                String userId = rs.getString("userId");
+                String role = rs.getString("role");
+
+                if (role.equals("CUSTOMER")) {
+                    return new Customer(userId, username, password, rs.getString("address"), rs.getString("nic"), rs.getString("phoneNumber"));
+                } else {
+                    return new User(userId, username, password, "MANAGER") {};
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
