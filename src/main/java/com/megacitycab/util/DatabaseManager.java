@@ -1,47 +1,36 @@
 package com.megacitycab.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class DatabaseManager {
-    private static Connection connection;
+    // Singleton instance
+    private static DatabaseManager instance;
+    private Connection connection;
 
-    public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                Properties props = new Properties();
-                FileInputStream fis = new FileInputStream("src/main/resources/database.properties");
-                props.load(fis);
-
-                String url = props.getProperty("db.url");
-                String user = props.getProperty("db.user");
-                String password = props.getProperty("db.password");
-                String driver = props.getProperty("db.driver");
-
-                Class.forName(driver);
-                connection = DriverManager.getConnection(url, user, password);
-                System.out.println("✅ Database Connection Successful!");
-
-            } catch (IOException | ClassNotFoundException | SQLException e) {
-                e.printStackTrace();
-                System.out.println("Database Connection Failed!");
-            }
+    // Private constructor prevents instantiation
+    private DatabaseManager() {
+        try {
+            String url = "jdbc:mysql://localhost:3306/megacitycab";
+            String user = "root"; // Replace with your MySQL username
+            String password = "password"; // Replace with your password
+            connection = DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            throw new RuntimeException("Database connection failed!", e);
         }
-        return connection;
     }
 
-    public static void closeConnection() {
-        try {
-            if (connection != null) {
-                connection.close();
-                System.out.println("✅ Database Connection Closed.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // Provides a global access point to the instance
+    public static synchronized DatabaseManager getInstance() {
+        if (instance == null) {
+            instance = new DatabaseManager();
         }
+        return instance;
+    }
+
+    // Returns the database connection
+    public Connection getConnection() {
+        return connection;
     }
 }
