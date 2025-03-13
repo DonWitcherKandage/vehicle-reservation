@@ -37,7 +37,8 @@ public class ManageDriversUI extends Application {
         TableColumn<Driver, Boolean> availabilityColumn = new TableColumn<>("Available");
         availabilityColumn.setCellValueFactory(data -> data.getValue().availabilityProperty());
 
-        driverTable.getColumns().addAll(idColumn, nameColumn, availabilityColumn);
+       // ✅ Fix Type Safety Warning: Convert to List before adding
+        driverTable.getColumns().addAll(List.of(idColumn, nameColumn, availabilityColumn));
         loadDrivers();
 
         Label nameLabel = new Label("Driver Name:");

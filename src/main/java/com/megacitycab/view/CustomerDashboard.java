@@ -1,6 +1,6 @@
 package com.megacitycab.view;
 
-import com.megacitycab.controller.BookingController;
+//import com.megacitycab.controller.BookingController;
 import com.megacitycab.util.BookingNotifier;
 import com.megacitycab.util.CustomerObserver;
 import javafx.application.Application;

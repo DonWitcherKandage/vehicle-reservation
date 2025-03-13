@@ -1,5 +1,6 @@
 package com.megacitycab.view;
 
+//import com.megacitycab.view.BookingUI;
 import com.megacitycab.util.BookingNotifier;
 import com.megacitycab.util.ManagerObserver;
 import javafx.application.Application;
@@ -47,7 +48,7 @@ public class ManagerDashboard extends Application {
         // Button Actions
         manageVehiclesBtn.setOnAction(e -> new ManageVehiclesUI().start(new Stage()));
         manageDriversBtn.setOnAction(e -> new ManageDriversUI().start(new Stage()));
-        viewBookingsBtn.setOnAction(e -> new BookingManagementUI().start(new Stage()));
+        viewBookingsBtn.setOnAction(e -> new BookingUI().start(new Stage()));
         generateReportsBtn.setOnAction(e -> new ReportUI().start(new Stage()));
 
         logoutBtn.setOnAction(e -> {

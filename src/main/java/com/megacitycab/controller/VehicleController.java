@@ -1,27 +1,27 @@
 package com.megacitycab.controller;
 
-import com.megacitycab.dao.VehicleDAO;
 import com.megacitycab.model.Vehicle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-import java.util.List;
-
+/**
+ * Controls vehicle-related operations.
+ */
 public class VehicleController {
-    private VehicleDAO vehicleDAO;
+    private ObservableList<Vehicle> vehicles = FXCollections.observableArrayList();
 
-    public VehicleController() {
-        this.vehicleDAO = new VehicleDAO();
+    // ✅ Add a vehicle
+    public void addVehicle(String plateNumber, String type, String model, double ratePerKm, boolean availability, String imagePath) {
+        vehicles.add(new Vehicle(plateNumber, type, model, ratePerKm, availability, imagePath));
     }
 
-    public void addVehicle(String plateNumber, String type, String model, double ratePerKm, String imagePath) {
-        Vehicle vehicle = new Vehicle(plateNumber, type, model, ratePerKm, true, imagePath);
-        vehicleDAO.addVehicle(vehicle);
-    }
-
+    // ✅ Delete a vehicle
     public void deleteVehicle(String plateNumber) {
-        vehicleDAO.deleteVehicle(plateNumber);
+        vehicles.removeIf(vehicle -> vehicle.getPlateNumber().equals(plateNumber));
     }
 
-    public List<Vehicle> getAllVehicles() {
-        return vehicleDAO.getAllVehicles();
+    // ✅ Get all vehicles
+    public ObservableList<Vehicle> getVehicles() {
+        return vehicles;
     }
 }
