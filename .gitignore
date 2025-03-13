@@ -1,12 +1,11 @@
-# Maven
-target/
-*.jar
-*.war
+# Ignore compiled binaries
+/bin/
+/target/
 
-# IDE
-.idea/
+# Ignore libraries (optional)
+lib/*.jar
+
+# Ignore IDE settings (VS Code, IntelliJ)
 .vscode/
+.idea/
 *.iml
-
-# Database credentials
-src/main/resources/database.properties
