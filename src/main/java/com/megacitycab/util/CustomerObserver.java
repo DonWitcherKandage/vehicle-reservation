@@ -1,14 +1,17 @@
 package com.megacitycab.util;
 
-public class CustomerObserver implements Observer {
-    private String customerName;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 
-    public CustomerObserver(String customerName) {
-        this.customerName = customerName;
+public class CustomerObserver implements Observer {
+    private ObservableList<String> notificationList;
+
+    public CustomerObserver(ObservableList<String> notificationList) {
+        this.notificationList = notificationList;
     }
 
     @Override
     public void update(String message) {
-        System.out.println("📢 Notification for " + customerName + ": " + message);
+        Platform.runLater(() -> notificationList.add("📢 " + message)); // Adds notification to UI ListView
     }
 }

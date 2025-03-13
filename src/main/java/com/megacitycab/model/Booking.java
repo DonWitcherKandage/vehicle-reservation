@@ -10,7 +10,7 @@ public class Booking {
     private String destination;
     private LocalDateTime bookingDate;
     private double totalAmount;
-    private String status;  // Pending, Accepted, Completed, Cancelled
+    private String status;
 
     public Booking(String bookingId, String customerId, String carId, String driverId, String destination, LocalDateTime bookingDate, double totalAmount) {
         this.bookingId = bookingId;
@@ -20,7 +20,7 @@ public class Booking {
         this.destination = destination;
         this.bookingDate = bookingDate;
         this.totalAmount = totalAmount;
-        this.status = "Pending";  // Default status
+        this.status = "Pending";
     }
 
     public String getBookingId() { return bookingId; }
@@ -31,6 +31,5 @@ public class Booking {
     public LocalDateTime getBookingDate() { return bookingDate; }
     public double getTotalAmount() { return totalAmount; }
     public String getStatus() { return status; }
-
     public void setStatus(String status) { this.status = status; }
 }

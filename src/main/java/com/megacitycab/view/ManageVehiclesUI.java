@@ -23,7 +23,7 @@ public class ManageVehiclesUI extends Application {
     private ObservableList<Vehicle> vehicleList;
     private TableView<Vehicle> vehicleTable;
     private ImageView vehicleImageView;
-    private File selectedImageFile; // Stores selected image file
+    private File selectedImageFile;
 
     @Override
     public void start(Stage primaryStage) {
@@ -32,7 +32,6 @@ public class ManageVehiclesUI extends Application {
         Label titleLabel = new Label("Vehicle Management");
         titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        // Table to Display Vehicles
         vehicleTable = new TableView<>();
         TableColumn<Vehicle, String> plateColumn = new TableColumn<>("Plate Number");
         plateColumn.setCellValueFactory(data -> data.getValue().plateNumberProperty());
@@ -50,9 +49,8 @@ public class ManageVehiclesUI extends Application {
         availabilityColumn.setCellValueFactory(data -> data.getValue().availabilityProperty());
 
         vehicleTable.getColumns().addAll(plateColumn, typeColumn, modelColumn, rateColumn, availabilityColumn);
-        loadVehicles(); // Load vehicles from DB
+        loadVehicles();
 
-        // Form to Add/Edit Vehicles
         Label plateLabel = new Label("Vehicle Plate:");
         TextField plateField = new TextField();
 
@@ -82,21 +80,18 @@ public class ManageVehiclesUI extends Application {
         });
 
         Button addButton = new Button("Add Vehicle");
-        Button updateButton = new Button("Update Vehicle");
         Button deleteButton = new Button("Delete Vehicle");
 
-        // Add New Vehicle
         addButton.setOnAction(e -> {
             if (!plateField.getText().isEmpty() && !typeBox.getValue().isEmpty() &&
                     !modelField.getText().isEmpty() && !rateField.getText().isEmpty()) {
                 double rate = Double.parseDouble(rateField.getText());
                 String imagePath = (selectedImageFile != null) ? selectedImageFile.getAbsolutePath() : "";
                 vehicleController.addVehicle(plateField.getText(), typeBox.getValue(), modelField.getText(), rate, imagePath);
-                loadVehicles(); // Refresh Table
+                loadVehicles();
             }
         });
 
-        // Delete Selected Vehicle
         deleteButton.setOnAction(e -> {
             Vehicle selectedVehicle = vehicleTable.getSelectionModel().getSelectedItem();
             if (selectedVehicle != null) {
@@ -105,9 +100,8 @@ public class ManageVehiclesUI extends Application {
             }
         });
 
-        // Layouts
         HBox formLayout = new HBox(10, plateLabel, plateField, typeLabel, typeBox, modelLabel, modelField, rateLabel, rateField, imageButton, vehicleImageView);
-        VBox layout = new VBox(10, titleLabel, vehicleTable, formLayout, addButton, updateButton, deleteButton);
+        VBox layout = new VBox(10, titleLabel, vehicleTable, formLayout, addButton, deleteButton);
         layout.setPadding(new Insets(20));
 
         Scene scene = new Scene(layout, 800, 500);
@@ -115,7 +109,6 @@ public class ManageVehiclesUI extends Application {
         primaryStage.show();
     }
 
-    // Load Vehicles from Database
     private void loadVehicles() {
         List<Vehicle> vehicles = vehicleController.getAllVehicles();
         vehicleList = FXCollections.observableArrayList(vehicles);

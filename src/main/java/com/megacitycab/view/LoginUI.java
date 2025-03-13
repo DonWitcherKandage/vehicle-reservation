@@ -22,19 +22,11 @@ public class LoginUI extends Application {
         loginButton.setOnAction(e -> {
             User user = authController.login(usernameField.getText(), passwordField.getText());
             if (user != null) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Login Successful!");
-
-                // Redirect users to appropriate dashboard
-                if (user.getRole().equals("CUSTOMER")) {
-                    CustomerDashboard customerDashboard = new CustomerDashboard();
-                    customerDashboard.start(new Stage());
-                } else {
-                    ManagerDashboard managerDashboard = new ManagerDashboard();
-                    managerDashboard.start(new Stage());
-                }
-                primaryStage.close();  // Close login window
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Login Successful!");
+                alert.show();
             } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid Credentials!");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid Credentials!");
+                alert.show();
             }
         });
 
@@ -42,15 +34,6 @@ public class LoginUI extends Application {
         Scene scene = new Scene(layout, 300, 250);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    // Utility method to show alerts
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.show();
     }
 
     public static void main(String[] args) {

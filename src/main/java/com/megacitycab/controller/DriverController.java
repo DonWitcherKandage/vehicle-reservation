@@ -14,7 +14,7 @@ public class DriverController {
     }
 
     public void addDriver(String name, boolean availability) {
-        String driverId = UUID.randomUUID().toString(); // Generate unique driver ID
+        String driverId = UUID.randomUUID().toString();
         Driver driver = new Driver(driverId, name, availability);
         driverDAO.addDriver(driver);
     }

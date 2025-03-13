@@ -1,6 +1,5 @@
 package com.megacitycab.view;
 
-import com.megacitycab.controller.ProfileController;
 import com.megacitycab.model.Customer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -10,12 +9,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ProfileUI extends Application {
-    private ProfileController profileController;
-    private Customer loggedInCustomer; // Stores the current customer details
+    private Customer loggedInCustomer;
 
     public ProfileUI(Customer customer) {
         this.loggedInCustomer = customer;
-        this.profileController = new ProfileController();
     }
 
     @Override

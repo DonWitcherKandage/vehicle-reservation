@@ -12,7 +12,6 @@ public class Customer extends User {
         this.phoneNumber = phoneNumber;
     }
 
-    // Getters
     public String getAddress() { return address; }
     public String getNic() { return nic; }
     public String getPhoneNumber() { return phoneNumber; }

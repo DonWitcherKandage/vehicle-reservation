@@ -4,7 +4,7 @@ public abstract class User {
     protected String userId;
     protected String username;
     protected String password;
-    protected String role;  // "CUSTOMER" or "MANAGER"
+    protected String role; 
 
     public User(String userId, String username, String password, String role) {
         this.userId = userId;
@@ -13,7 +13,6 @@ public abstract class User {
         this.role = role;
     }
 
-    // Getters
     public String getUserId() { return userId; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }

@@ -5,23 +5,33 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    // Singleton instance
     private static DatabaseManager instance;
     private Connection connection;
 
-    // Private constructor prevents instantiation
+    // ✅ Update your database credentials here
+    private static final String URL = "jdbc:mysql://localhost:3306/megacitycab";
+    private static final String USER = "pramudithakandage";  // Use the new user
+    private static final String PASSWORD = "SandH199709"; // Replace with the actual password
+
     private DatabaseManager() {
         try {
-            String url = "jdbc:mysql://localhost:3306/megacitycab";
-            String user = "root"; // Replace with your MySQL username
-            String password = "password"; // Replace with your password
-            connection = DriverManager.getConnection(url, user, password);
+            // ✅ Load MySQL JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // ✅ Establish Connection
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("✅ Database Connection Successful!");
+        } catch (ClassNotFoundException e) {
+            System.err.println("❌ MySQL JDBC Driver Not Found!");
+            e.printStackTrace();
         } catch (SQLException e) {
+            System.err.println("❌ Database Connection Failed!");
+            e.printStackTrace();
             throw new RuntimeException("Database connection failed!", e);
         }
     }
 
-    // Provides a global access point to the instance
+    // ✅ Singleton Pattern - Ensures only one instance of DatabaseManager
     public static synchronized DatabaseManager getInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -29,8 +39,21 @@ public class DatabaseManager {
         return instance;
     }
 
-    // Returns the database connection
+    // ✅ Get Database Connection
     public Connection getConnection() {
         return connection;
+    }
+
+    // ✅ Close Connection
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("✅ Database Connection Closed.");
+            } catch (SQLException e) {
+                System.err.println("❌ Error Closing Database Connection!");
+                e.printStackTrace();
+            }
+        }
     }
 }

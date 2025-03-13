@@ -38,9 +38,8 @@ public class ManageDriversUI extends Application {
         availabilityColumn.setCellValueFactory(data -> data.getValue().availabilityProperty());
 
         driverTable.getColumns().addAll(idColumn, nameColumn, availabilityColumn);
-        loadDrivers(); // Load drivers from DB
+        loadDrivers();
 
-        // Form to Add/Edit Drivers
         Label nameLabel = new Label("Driver Name:");
         TextField nameField = new TextField();
 
@@ -49,15 +48,13 @@ public class ManageDriversUI extends Application {
         Button addButton = new Button("Add Driver");
         Button deleteButton = new Button("Delete Driver");
 
-        // Add New Driver
         addButton.setOnAction(e -> {
             if (!nameField.getText().isEmpty()) {
                 driverController.addDriver(nameField.getText(), availableCheckBox.isSelected());
-                loadDrivers(); // Refresh Table
+                loadDrivers();
             }
         });
 
-        // Delete Selected Driver
         deleteButton.setOnAction(e -> {
             Driver selectedDriver = driverTable.getSelectionModel().getSelectedItem();
             if (selectedDriver != null) {
@@ -66,7 +63,6 @@ public class ManageDriversUI extends Application {
             }
         });
 
-        // Layouts
         HBox formLayout = new HBox(10, nameLabel, nameField, availableCheckBox);
         VBox layout = new VBox(10, titleLabel, driverTable, formLayout, addButton, deleteButton);
         layout.setPadding(new Insets(20));
@@ -76,7 +72,6 @@ public class ManageDriversUI extends Application {
         primaryStage.show();
     }
 
-    // Load Drivers from Database
     private void loadDrivers() {
         List<Driver> drivers = driverController.getAllDrivers();
         driverList = FXCollections.observableArrayList(drivers);

@@ -1,10 +1,12 @@
 package com.megacitycab.model;
 
 public class Manager extends User {
-    private String managerID;
+    private String managerId;
 
-    public Manager(String userID, String userName, String password, String managerID) {
-        super(userID, userName, password);
-        this.managerID = managerID;
+    public Manager(String userId, String username, String password, String managerId) {
+        super(userId, username, password, "MANAGER");
+        this.managerId = managerId;
     }
+
+    public String getManagerId() { return managerId; }
 }
