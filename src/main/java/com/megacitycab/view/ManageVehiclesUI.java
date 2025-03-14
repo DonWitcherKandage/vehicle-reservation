@@ -41,8 +41,10 @@ public class ManageVehiclesUI extends Application {
         TableColumn<Vehicle, Boolean> availabilityColumn = new TableColumn<>("Available");
         availabilityColumn.setCellValueFactory(data -> data.getValue().availabilityProperty());
 
-        vehicleTable.getColumns().addAll(plateColumn, typeColumn, modelColumn, rateColumn, availabilityColumn);
-
+        vehicleTable.getColumns().add(plateColumn);
+        vehicleTable.getColumns().add(typeColumn);
+        vehicleTable.getColumns().add(modelColumn);
+        
         // ✅ Load Vehicles
         loadVehicles();
 
