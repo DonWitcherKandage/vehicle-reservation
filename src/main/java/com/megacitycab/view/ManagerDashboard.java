@@ -1,14 +1,22 @@
 package com.megacitycab.view;
 
+import com.megacitycab.controller.VehicleController;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * Manager Dashboard UI.
+ */
 public class ManagerDashboard extends Application {
+
+    private VehicleController vehicleController;
+
+    public ManagerDashboard() {
+        this.vehicleController = new VehicleController();
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -46,8 +54,9 @@ public class ManagerDashboard extends Application {
         });
 
         manageVehiclesItem.setOnAction(e -> {
-            // Open Manage Vehicles UI
-            new ManageVehiclesUI().start(primaryStage);
+            // Open Manage Vehicles UI (Pass `vehicleController`)
+            ManageVehiclesUI manageVehiclesUI = new ManageVehiclesUI(vehicleController);
+            manageVehiclesUI.start(primaryStage);
         });
 
         manageDriversItem.setOnAction(e -> {

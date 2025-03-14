@@ -1,69 +1,49 @@
 package com.megacitycab.model;
 
+import javafx.beans.property.*;
+
 public class Vehicle {
-    private String id;
-    private String model;
-    private String plateNumber;
-    private double ratePerKm;
-    private boolean isAvailable;
-    private String imagePath;
+    private final StringProperty plateNumber;
+    private final StringProperty type;
+    private final StringProperty model;
+    private final DoubleProperty ratePerKm;
+    private final BooleanProperty availability;
+    private final StringProperty imagePath;
 
-    // Constructor
-    public Vehicle(String id, String model, String plateNumber, double ratePerKm, boolean isAvailable, String imagePath) {
-        this.id = id;
-        this.model = model;
-        this.plateNumber = plateNumber;
-        this.ratePerKm = ratePerKm;
-        this.isAvailable = isAvailable;
-        this.imagePath = imagePath;
+    public Vehicle(String plateNumber, String type, String model, double ratePerKm, boolean availability, String imagePath) {
+        this.plateNumber = new SimpleStringProperty(plateNumber);
+        this.type = new SimpleStringProperty(type);
+        this.model = new SimpleStringProperty(model);
+        this.ratePerKm = new SimpleDoubleProperty(ratePerKm);
+        this.availability = new SimpleBooleanProperty(availability);
+        this.imagePath = new SimpleStringProperty(imagePath);
     }
 
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
+    // Property Getters for JavaFX Bindings
+    public StringProperty plateNumberProperty() { return plateNumber; }
+    public StringProperty typeProperty() { return type; }
+    public StringProperty modelProperty() { return model; }
+    public DoubleProperty ratePerKmProperty() { return ratePerKm; }
+    public BooleanProperty availabilityProperty() { return availability; }
+    public StringProperty imagePathProperty() { return imagePath; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    // Regular Getters & Setters
+    public String getPlateNumber() { return plateNumber.get(); }
+    public void setPlateNumber(String value) { plateNumber.set(value); }
 
-    public String getModel() {
-        return model;
-    }
+    public String getType() { return type.get(); }
+    public void setType(String value) { type.set(value); }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+    public String getModel() { return model.get(); }
+    public void setModel(String value) { model.set(value); }
 
-    public String getPlateNumber() {
-        return plateNumber;
-    }
+    public double getRatePerKm() { return ratePerKm.get(); }
+    public void setRatePerKm(double value) { ratePerKm.set(value); }
 
-    public void setPlateNumber(String plateNumber) {
-        this.plateNumber = plateNumber;
-    }
+    public boolean isAvailable() { return availability.get(); }
+    public void setAvailability(boolean value) { availability.set(value); }
 
-    public double getRatePerKm() {
-        return ratePerKm;
-    }
-
-    public void setRatePerKm(double ratePerKm) {
-        this.ratePerKm = ratePerKm;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+    public String getImagePath() { return imagePath.get(); }
+    public void setImagePath(String value) { imagePath.set(value); }
 }
+

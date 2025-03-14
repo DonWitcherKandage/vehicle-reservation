@@ -6,7 +6,16 @@ import com.megacitycab.view.ManageDriversUI;
 import com.megacitycab.view.ReportUI;
 import javafx.stage.Stage;
 
+/**
+ * Controls manager actions like managing vehicles, drivers, and reports.
+ */
 public class ManagerController {
+    
+    private VehicleController vehicleController;
+
+    public ManagerController() {
+        this.vehicleController = new VehicleController();
+    }
 
     public void logout(Stage primaryStage) {
         // Redirect to Login Screen
@@ -14,8 +23,8 @@ public class ManagerController {
     }
 
     public void manageVehicles(Stage primaryStage) {
-        // Open Manage Vehicles UI
-        new ManageVehiclesUI().start(primaryStage);
+        // ✅ Open Manage Vehicles UI with VehicleController
+        new ManageVehiclesUI(vehicleController).start(primaryStage);
     }
 
     public void manageDrivers(Stage primaryStage) {

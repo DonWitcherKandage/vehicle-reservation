@@ -1,28 +1,31 @@
 package com.megacitycab.controller;
 
+import java.util.List;
+
 import com.megacitycab.dao.DriverDAO;
 import com.megacitycab.model.Driver;
 
-import java.util.List;
-import java.util.UUID;
-
 public class DriverController {
-    private DriverDAO driverDAO;
+    private final DriverDAO driverDAO = new DriverDAO();
 
-    public DriverController() {
-        this.driverDAO = new DriverDAO();
+    // Add a new driver
+    public boolean addDriver(String driverID, String name, boolean availability) {
+        Driver driver = new Driver(driverID, name, availability);
+        return driverDAO.addDriver(driver);
     }
 
-    public void addDriver(String name, boolean availability) {
-        String driverId = UUID.randomUUID().toString();
-        Driver driver = new Driver(driverId, name, availability);
-        driverDAO.addDriver(driver);
+    // Update driver details
+    public boolean updateDriver(String driverID, String name, boolean availability) {
+        Driver driver = new Driver(driverID, name, availability);
+        return driverDAO.updateDriver(driver);
     }
 
-    public void deleteDriver(String driverId) {
-        driverDAO.deleteDriver(driverId);
+    // Delete a driver
+    public boolean deleteDriver(String driverID) {
+        return driverDAO.deleteDriver(driverID);
     }
 
+    // Get all drivers
     public List<Driver> getAllDrivers() {
         return driverDAO.getAllDrivers();
     }
