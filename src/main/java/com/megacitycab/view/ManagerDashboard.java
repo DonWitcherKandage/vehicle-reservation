@@ -1,10 +1,8 @@
 package com.megacitycab.view;
 
-//import com.megacitycab.view.BookingUI;
-import com.megacitycab.util.BookingNotifier;
-import com.megacitycab.util.ManagerObserver;
+import com.megacitycab.controller.BookingController;
+import com.megacitycab.model.Booking;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,58 +11,52 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class ManagerDashboard extends Application {
-    private ObservableList<String> notificationList = FXCollections.observableArrayList();
-    private BookingNotifier notifier;
+    private BookingController bookingController;
+    private TableView<Booking> bookingTable;
 
     @Override
     public void start(Stage primaryStage) {
+        bookingController = new BookingController();
+
         primaryStage.setTitle("Manager Dashboard");
 
-        Label welcomeLabel = new Label("Welcome, Manager!");
+        // Table Setup
+        bookingTable = new TableView<>();
+        TableColumn<Booking, String> destinationColumn = new TableColumn<>("Destination");
+        destinationColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDestination()));
 
-        Button manageVehiclesBtn = new Button("🚗 Manage Vehicles");
-        Button manageDriversBtn = new Button("🧑‍✈️ Manage Drivers");
-        Button viewBookingsBtn = new Button("📋 View & Assign Bookings");
-        Button generateReportsBtn = new Button("📊 Generate Reports");
-        Button logoutBtn = new Button("🚪 Logout");
+        TableColumn<Booking, String> dateColumn = new TableColumn<>("Date");
+        dateColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDate()));
 
-        // Style Buttons
-        manageVehiclesBtn.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px;");
-        manageDriversBtn.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px;");
-        viewBookingsBtn.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px;");
-        generateReportsBtn.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px;");
-        logoutBtn.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
+        TableColumn<Booking, String> timeColumn = new TableColumn<>("Time");
+        timeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTime()));
 
-        // Notifications Section
-        Label notificationLabel = new Label("🔔 Notifications:");
-        ListView<String> notificationView = new ListView<>(notificationList);
-        notificationView.setPrefHeight(150);
+        TableColumn<Booking, String> vehicleTypeColumn = new TableColumn<>("Vehicle Type");
+        vehicleTypeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getVehicleType()));
 
-        // Setup Observer for Notifications
-        notifier = new BookingNotifier();
-        notifier.addObserver(new ManagerObserver(notificationList));
+        TableColumn<Booking, String> priceColumn = new TableColumn<>("Price");
+        priceColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.valueOf(cellData.getValue().getPrice())));
 
-        // Button Actions
-        manageVehiclesBtn.setOnAction(e -> new ManageVehiclesUI().start(new Stage()));
-        manageDriversBtn.setOnAction(e -> new ManageDriversUI().start(new Stage()));
-        viewBookingsBtn.setOnAction(e -> new BookingUI().start(new Stage()));
-        generateReportsBtn.setOnAction(e -> new ReportUI().start(new Stage()));
+        bookingTable.getColumns().addAll(destinationColumn, dateColumn, timeColumn, vehicleTypeColumn, priceColumn);
 
-        logoutBtn.setOnAction(e -> {
-            new LoginUI().start(new Stage());  // Open Login Screen
-            primaryStage.close();  // Close Manager Dashboard
-        });
+        // Load Bookings
+        loadBookings();
 
-        VBox layout = new VBox(15, welcomeLabel, manageVehiclesBtn, manageDriversBtn, viewBookingsBtn, generateReportsBtn, notificationLabel, notificationView, logoutBtn);
+        VBox layout = new VBox(10, bookingTable);
         layout.setPadding(new Insets(20));
 
-        Scene scene = new Scene(layout, 400, 500);
+        Scene scene = new Scene(layout, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
 
-        // Simulate a test notification (Remove in final version)
-        Platform.runLater(() -> notifier.notifyObservers("🚕 New Booking Request! Assign a driver."));
+    private void loadBookings() {
+        List<Booking> pendingBookings = bookingController.getPendingBookings();
+        ObservableList<Booking> bookings = FXCollections.observableArrayList(pendingBookings);
+        bookingTable.setItems(bookings);
     }
 
     public static void main(String[] args) {

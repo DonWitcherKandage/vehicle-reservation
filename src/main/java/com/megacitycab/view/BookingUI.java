@@ -5,47 +5,66 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class BookingUI extends Application {
-
-    private BookingController bookingController = new BookingController();
+    private BookingController bookingController;
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Book a Ride");
+        bookingController = new BookingController();
 
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
-        grid.setVgap(10);
-        grid.setHgap(10);
+        primaryStage.setTitle("Book a Ride");
 
         Label destinationLabel = new Label("Destination:");
         TextField destinationField = new TextField();
-        
-        Label vehicleLabel = new Label("Vehicle Type:");
-        ComboBox<String> vehicleBox = new ComboBox<>();
-        vehicleBox.getItems().addAll("Car", "Van", "SUV");
 
-        Label fareLabel = new Label("Total Fare:");
-        TextField fareField = new TextField();
-        fareField.setEditable(false);
+        Label dateLabel = new Label("Date:");
+        TextField dateField = new TextField();
 
-        Button bookButton = new Button("Book Now");
-        bookButton.setOnAction(e -> {
-            bookingController.createBooking("cust123", "car567", "driver789", destinationField.getText(), 100.0);
+        Label timeLabel = new Label("Time:");
+        TextField timeField = new TextField();
+
+        Label vehicleTypeLabel = new Label("Vehicle Type:");
+        ComboBox<String> vehicleTypeBox = new ComboBox<>();
+        vehicleTypeBox.getItems().addAll("Car", "Van", "SUV");
+
+        Label priceLabel = new Label("Price (calculated):");
+        Label priceValue = new Label("Rs. 0.00");
+
+        Button calculatePriceBtn = new Button("Calculate Price");
+        calculatePriceBtn.setOnAction(e -> {
+            double ratePerKm = 50.0; // Example rate
+            double distance = 10; // Example distance
+            double price = ratePerKm * distance;
+            priceValue.setText("Rs. " + price);
         });
 
-        grid.add(destinationLabel, 0, 0);
-        grid.add(destinationField, 1, 0);
-        grid.add(vehicleLabel, 0, 1);
-        grid.add(vehicleBox, 1, 1);
-        grid.add(fareLabel, 0, 2);
-        grid.add(fareField, 1, 2);
-        grid.add(bookButton, 1, 3);
+        Button bookNowBtn = new Button("Book Now");
+        bookNowBtn.setOnAction(e -> {
+            String destination = destinationField.getText();
+            String date = dateField.getText();
+            String time = timeField.getText();
+            String vehicleType = vehicleTypeBox.getValue();
+            double price = Double.parseDouble(priceValue.getText().replace("Rs. ", ""));
 
-        Scene scene = new Scene(grid, 400, 250);
+            bookingController.addBooking(destination, date, time, vehicleType, price, 1); // Example Customer ID
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Booking Confirmed");
+            alert.setHeaderText(null);
+            alert.setContentText("Your ride has been booked successfully!");
+            alert.showAndWait();
+
+            primaryStage.close();
+        });
+
+        VBox layout = new VBox(10, destinationLabel, destinationField, dateLabel, dateField, timeLabel, timeField,
+                vehicleTypeLabel, vehicleTypeBox, priceLabel, priceValue, calculatePriceBtn, bookNowBtn);
+        layout.setPadding(new Insets(20));
+
+        Scene scene = new Scene(layout, 400, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

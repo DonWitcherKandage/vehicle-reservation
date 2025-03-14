@@ -1,35 +1,34 @@
 package com.megacitycab.model;
 
-import java.time.LocalDateTime;
-
 public class Booking {
-    private String bookingId;
-    private String customerId;
-    private String carId;
-    private String driverId;
+    private int bookingId;
     private String destination;
-    private LocalDateTime bookingDate;
-    private double totalAmount;
+    private String date;
+    private String time;
+    private String vehicleType;
+    private double price;
     private String status;
+    private int customerId;
 
-    public Booking(String bookingId, String customerId, String carId, String driverId, String destination, LocalDateTime bookingDate, double totalAmount) {
+    // Constructor
+    public Booking(int bookingId, String destination, String date, String time, String vehicleType, double price, String status, int customerId) {
         this.bookingId = bookingId;
-        this.customerId = customerId;
-        this.carId = carId;
-        this.driverId = driverId;
         this.destination = destination;
-        this.bookingDate = bookingDate;
-        this.totalAmount = totalAmount;
-        this.status = "Pending";
+        this.date = date;
+        this.time = time;
+        this.vehicleType = vehicleType;
+        this.price = price;
+        this.status = status;
+        this.customerId = customerId;
     }
 
-    public String getBookingId() { return bookingId; }
-    public String getCustomerId() { return customerId; }
-    public String getCarId() { return carId; }
-    public String getDriverId() { return driverId; }
+    // Getters
+    public int getBookingId() { return bookingId; }
     public String getDestination() { return destination; }
-    public LocalDateTime getBookingDate() { return bookingDate; }
-    public double getTotalAmount() { return totalAmount; }
+    public String getDate() { return date; }
+    public String getTime() { return time; }
+    public String getVehicleType() { return vehicleType; }
+    public double getPrice() { return price; }
     public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public int getCustomerId() { return customerId; }
 }
