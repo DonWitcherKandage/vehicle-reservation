@@ -1,72 +1,52 @@
 package com.megacitycab.dao;
 
 import com.megacitycab.model.Vehicle;
-import com.megacitycab.util.DatabaseManager; // Add this import
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.megacitycab.util.DatabaseManager;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VehicleDAO {
 
-    // Method to get all vehicles
     public List<Vehicle> getAllVehicles() {
         List<Vehicle> vehicles = new ArrayList<>();
-        String query = "SELECT * FROM vehicles";
+        DatabaseManager dbManager = DatabaseManager.getInstance(); // Use singleton
 
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
+        try (Connection connection = dbManager.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM vehicles")) {
 
             while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String model = resultSet.getString("model");
-                String plateNumber = resultSet.getString("plate_number");
-                double ratePerKm = resultSet.getDouble("rate_per_km");
-                boolean isAvailable = resultSet.getBoolean("is_available");
-                String imagePath = resultSet.getString("image_path");
-
-                // Create a new Vehicle object
-                Vehicle vehicle = new Vehicle(id, model, plateNumber, ratePerKm, isAvailable, imagePath);
+                Vehicle vehicle = new Vehicle(
+                        String.valueOf(resultSet.getInt("id")), // Convert int to String
+                        resultSet.getString("model"),
+                        resultSet.getString("license_plate"), // Match with plateNumber
+                        resultSet.getDouble("rate_per_km"), // New field
+                        resultSet.getBoolean("available"),
+                        resultSet.getString("image_path") // New field
+                );
                 vehicles.add(vehicle);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return vehicles;
     }
 
-    // Method to get a vehicle by ID
-    public Vehicle getVehicleById(String vehicleId) {
-        String query = "SELECT * FROM vehicles WHERE id = ?";
-        Vehicle vehicle = null;
+    public void updateVehicleAvailability(String vehicleId, boolean available) {
+        DatabaseManager dbManager = DatabaseManager.getInstance(); // Use singleton
 
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try (Connection connection = dbManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE vehicles SET available = ? WHERE id = ?")) {
 
-            statement.setString(1, vehicleId);
-            ResultSet resultSet = statement.executeQuery();
+            statement.setBoolean(1, available);
+            statement.setString(2, vehicleId); // Use String for ID
+            statement.executeUpdate();
 
-            if (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String model = resultSet.getString("model");
-                String plateNumber = resultSet.getString("plate_number");
-                double ratePerKm = resultSet.getDouble("rate_per_km");
-                boolean isAvailable = resultSet.getBoolean("is_available");
-                String imagePath = resultSet.getString("image_path");
-
-                // Create a new Vehicle object
-                vehicle = new Vehicle(id, model, plateNumber, ratePerKm, isAvailable, imagePath);
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return vehicle;
     }
-
-    // Other methods (add, update, delete) can be added here
 }
