@@ -1,67 +1,30 @@
 package com.megacitycab.controller;
 
-import com.megacitycab.dao.DriverDAO;
-import com.megacitycab.dao.VehicleDAO;
-import com.megacitycab.model.Driver;
-import com.megacitycab.model.Vehicle;
-import com.megacitycab.util.DatabaseManager;
+import com.megacitycab.view.LoginUI;
+import com.megacitycab.view.ManageVehiclesUI;
+import com.megacitycab.view.ManageDriversUI;
+import com.megacitycab.view.ReportUI;
+import javafx.stage.Stage;
 
-import java.util.List;
-
-/**
- * Controller for managing vehicles and drivers in the system.
- */
 public class ManagerController {
-    private final DriverDAO driverDAO;
-    private final VehicleDAO vehicleDAO;
 
-    // ✅ Correctly initializing DAOs
-    public ManagerController() {
-        this.driverDAO = new DriverDAO();
-        this.vehicleDAO = new VehicleDAO(DatabaseManager.getInstance().getConnection()); // ✅ FIXED
+    public void logout(Stage primaryStage) {
+        // Redirect to Login Screen
+        new LoginUI().start(primaryStage);
     }
 
-    /**
-     * ✅ Adds a new driver to the system.
-     */
-    public boolean addDriver(String driverId, String name, boolean availability) {
-        Driver driver = new Driver(driverId, name, availability);
-        return driverDAO.addDriver(driver);
+    public void manageVehicles(Stage primaryStage) {
+        // Open Manage Vehicles UI
+        new ManageVehiclesUI().start(primaryStage);
     }
 
-    /**
-     * ✅ Assigns a driver to a vehicle.
-     */
-    public boolean assignDriver(String driverId, String vehicleId) {
-        return driverDAO.assignDriver(driverId, vehicleId);
+    public void manageDrivers(Stage primaryStage) {
+        // Open Manage Drivers UI
+        new ManageDriversUI().start(primaryStage);
     }
 
-    /**
-     * ✅ Adds a new vehicle to the system.
-     */
-    public boolean addVehicle(String plateNumber, String type, String model, double ratePerKm, boolean availability, String imagePath) {
-        Vehicle vehicle = new Vehicle(plateNumber, type, model, ratePerKm, availability, imagePath);
-        return vehicleDAO.addVehicle(vehicle);
-    }
-
-    /**
-     * ✅ Deletes a vehicle from the system.
-     */
-    public boolean deleteVehicle(String plateNumber) {
-        return vehicleDAO.deleteVehicle(plateNumber); // ✅ FIXED
-    }
-
-    /**
-     * ✅ Gets a list of all available drivers.
-     */
-    public List<Driver> getAvailableDrivers() {
-        return driverDAO.getAllDrivers();
-    }
-
-    /**
-     * ✅ Gets a list of all vehicles.
-     */
-    public List<Vehicle> getAllVehicles() {
-        return vehicleDAO.getAllVehicles();
+    public void generateReport(Stage primaryStage) {
+        // Open Report Generation UI
+        new ReportUI().start(primaryStage);
     }
 }

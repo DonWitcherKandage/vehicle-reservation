@@ -1,9 +1,8 @@
 package com.megacitycab.view;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -11,37 +10,33 @@ public class ReportUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Generate Reports");
+        VBox root = new VBox(10);
 
-        Label titleLabel = new Label("Generate Reports");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        // Buttons
+        Button bookingReportButton = new Button("Generate Booking Report");
+        Button vehicleReportButton = new Button("Generate Vehicle Report");
+        Button driverReportButton = new Button("Generate Driver Report");
 
-        ComboBox<String> reportTypeBox = new ComboBox<>();
-        reportTypeBox.getItems().addAll("Booking Summary", "Driver Performance", "Revenue Report");
+        // Add components to layout
+        root.getChildren().addAll(bookingReportButton, vehicleReportButton, driverReportButton);
 
-        Button generateButton = new Button("Generate Report");
-
-        TextArea reportArea = new TextArea();
-        reportArea.setEditable(false);
-
-        generateButton.setOnAction(e -> {
-            String reportType = reportTypeBox.getValue();
-            if (reportType == null || reportType.isEmpty()) {
-                reportArea.setText("⚠️ Please select a report type.");
-                return;
-            }
-            reportArea.setText("📊 Generating " + reportType + "...\n\n[Report Data Placeholder]");
+        // Event Handlers
+        bookingReportButton.setOnAction(e -> {
+            // Generate Booking Report
         });
 
-        VBox layout = new VBox(10, titleLabel, reportTypeBox, generateButton, reportArea);
-        layout.setPadding(new Insets(20));
+        vehicleReportButton.setOnAction(e -> {
+            // Generate Vehicle Report
+        });
 
-        Scene scene = new Scene(layout, 400, 300);
+        driverReportButton.setOnAction(e -> {
+            // Generate Driver Report
+        });
+
+        // Set Scene
+        Scene scene = new Scene(root, 400, 300);
+        primaryStage.setTitle("Generate Reports");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

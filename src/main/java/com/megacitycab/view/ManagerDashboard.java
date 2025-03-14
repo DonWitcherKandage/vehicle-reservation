@@ -1,62 +1,70 @@
 package com.megacitycab.view;
 
-import com.megacitycab.controller.BookingController;
-import com.megacitycab.model.Booking;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.util.List;
-
 public class ManagerDashboard extends Application {
-    private BookingController bookingController;
-    private TableView<Booking> bookingTable;
 
     @Override
     public void start(Stage primaryStage) {
-        bookingController = new BookingController();
+        BorderPane root = new BorderPane();
 
+        // Create Menu Bar
+        MenuBar menuBar = new MenuBar();
+
+        // File Menu
+        Menu fileMenu = new Menu("File");
+        MenuItem logoutItem = new MenuItem("Logout");
+        fileMenu.getItems().add(logoutItem);
+
+        // Manage Menu
+        Menu manageMenu = new Menu("Manage");
+        MenuItem manageVehiclesItem = new MenuItem("Manage Vehicles");
+        MenuItem manageDriversItem = new MenuItem("Manage Drivers");
+        manageMenu.getItems().addAll(manageVehiclesItem, manageDriversItem);
+
+        // Reports Menu
+        Menu reportsMenu = new Menu("Reports");
+        MenuItem generateReportItem = new MenuItem("Generate Report");
+        reportsMenu.getItems().add(generateReportItem);
+
+        // Add Menus to MenuBar
+        menuBar.getMenus().addAll(fileMenu, manageMenu, reportsMenu);
+
+        // Set MenuBar to Top of BorderPane
+        root.setTop(menuBar);
+
+        // Event Handlers
+        logoutItem.setOnAction(e -> {
+            // Redirect to Login Screen
+            new LoginUI().start(primaryStage);
+        });
+
+        manageVehiclesItem.setOnAction(e -> {
+            // Open Manage Vehicles UI
+            new ManageVehiclesUI().start(primaryStage);
+        });
+
+        manageDriversItem.setOnAction(e -> {
+            // Open Manage Drivers UI
+            new ManageDriversUI().start(primaryStage);
+        });
+
+        generateReportItem.setOnAction(e -> {
+            // Open Report Generation UI
+            new ReportUI().start(primaryStage);
+        });
+
+        // Set Scene
+        Scene scene = new Scene(root, 800, 600);
         primaryStage.setTitle("Manager Dashboard");
-
-        // Table Setup
-        bookingTable = new TableView<>();
-        TableColumn<Booking, String> destinationColumn = new TableColumn<>("Destination");
-        destinationColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDestination()));
-
-        TableColumn<Booking, String> dateColumn = new TableColumn<>("Date");
-        dateColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDate()));
-
-        TableColumn<Booking, String> timeColumn = new TableColumn<>("Time");
-        timeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTime()));
-
-        TableColumn<Booking, String> vehicleTypeColumn = new TableColumn<>("Vehicle Type");
-        vehicleTypeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getVehicleType()));
-
-        TableColumn<Booking, String> priceColumn = new TableColumn<>("Price");
-        priceColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.valueOf(cellData.getValue().getPrice())));
-
-        bookingTable.getColumns().addAll(destinationColumn, dateColumn, timeColumn, vehicleTypeColumn, priceColumn);
-
-        // Load Bookings
-        loadBookings();
-
-        VBox layout = new VBox(10, bookingTable);
-        layout.setPadding(new Insets(20));
-
-        Scene scene = new Scene(layout, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    private void loadBookings() {
-        List<Booking> pendingBookings = bookingController.getPendingBookings();
-        ObservableList<Booking> bookings = FXCollections.observableArrayList(pendingBookings);
-        bookingTable.setItems(bookings);
     }
 
     public static void main(String[] args) {
