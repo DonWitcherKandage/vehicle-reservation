@@ -1,43 +1,32 @@
 package com.megacitycab.controller;
 
+import com.megacitycab.dao.VehicleDAO;
 import com.megacitycab.model.Vehicle;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * Controls vehicle-related operations.
+ * VehicleController - Handles vehicle CRUD operations via DAO.
  */
 public class VehicleController {
-    private ObservableList<Vehicle> vehicles = FXCollections.observableArrayList();
+    private final VehicleDAO vehicleDAO;
 
-    // ✅ Add a vehicle using parameters
-    public void addVehicle(String plateNumber, String type, String model, double ratePerKm, boolean availability, String imagePath) {
-        vehicles.add(new Vehicle(plateNumber, type, model, ratePerKm, availability, imagePath));
+    public VehicleController() {
+        this.vehicleDAO = new VehicleDAO();
     }
 
-    // ✅ Overloaded method to add a Vehicle object
-    public void addVehicle(Vehicle vehicle) {
-        vehicles.add(vehicle);
+    public void addVehicle(String model, String plateNumber, String type, double ratePerKm, boolean availability, String imagePath) {
+        vehicleDAO.addVehicle(model, plateNumber, type, ratePerKm, availability, imagePath);
     }
 
-    // ✅ Delete a vehicle
-    public void deleteVehicle(String plateNumber) {
-        vehicles.removeIf(vehicle -> vehicle.getPlateNumber().equals(plateNumber));
-    }
-
-    // ✅ Get all vehicles
     public ObservableList<Vehicle> getAllVehicles() {
-        return vehicles;
+        return vehicleDAO.getAllVehicles();
     }
 
-    // ✅ Update vehicle availability
-    public void updateVehicle(String plateNumber, boolean availability) {
-        for (Vehicle vehicle : vehicles) {
-            if (vehicle.getPlateNumber().equals(plateNumber)) {
-                vehicle.setAvailability(availability);
-                break;
-            }
-        }
+    public void deleteVehicle(String vehicleId) {
+        vehicleDAO.deleteVehicle(vehicleId);
+    }
+
+    public void updateVehicle(String vehicleId, boolean availability) {
+        vehicleDAO.updateVehicle(vehicleId, availability);
     }
 }
- 

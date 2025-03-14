@@ -10,11 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
-/**
- * JavaFX UI for managing vehicles.
- */
 public class ManageVehiclesUI {
     private VehicleController vehicleController;
     private ObservableList<Vehicle> vehicleList;
@@ -31,17 +32,17 @@ public class ManageVehiclesUI {
         Label title = new Label("Manage Vehicles");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        // TableView setup
         vehicleTable = new TableView<>();
         setupTableColumns();
         vehicleTable.setItems(vehicleList);
 
-        // Input Fields
         TextField plateField = new TextField();
-        plateField.setPromptText("Plate Number");
+        plateField.setPromptText("Plate Number (ABC-1234)");
 
-        TextField typeField = new TextField();
-        typeField.setPromptText("Type");
+        ComboBox<String> typeComboBox = new ComboBox<>();
+        List<String> vehicleTypes = Arrays.asList("Car", "Van", "Truck");
+        typeComboBox.setItems(FXCollections.observableArrayList(vehicleTypes));
+        typeComboBox.setPromptText("Select Type");
 
         TextField modelField = new TextField();
         modelField.setPromptText("Model");
@@ -50,119 +51,62 @@ public class ManageVehiclesUI {
         rateField.setPromptText("Rate per Km");
 
         CheckBox availabilityCheckBox = new CheckBox("Available");
-
         TextField imagePathField = new TextField();
         imagePathField.setPromptText("Image Path");
+        Button selectImageBtn = new Button("Select Image");
 
-        // Buttons
+        selectImageBtn.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
+            File selectedFile = fileChooser.showOpenDialog(primaryStage);
+            if (selectedFile != null) {
+                imagePathField.setText(selectedFile.getAbsolutePath());
+            }
+        });
+
         Button addVehicleBtn = new Button("➕ Add Vehicle");
-        Button updateVehicleBtn = new Button("✏️ Update Availability");
+        Button updateVehicleBtn = new Button("✏️ Update Vehicle");
         Button deleteVehicleBtn = new Button("❌ Delete Vehicle");
+        Button backButton = new Button("⬅ Back");
 
-        // Button Actions
-        addVehicleBtn.setOnAction(e -> addVehicle(plateField, typeField, modelField, rateField, availabilityCheckBox, imagePathField));
+        addVehicleBtn.setOnAction(e -> addVehicle(modelField.getText(), plateField.getText(), typeComboBox.getValue(), Double.parseDouble(rateField.getText()), availabilityCheckBox.isSelected(), imagePathField.getText()));
         updateVehicleBtn.setOnAction(e -> updateVehicleAvailability());
         deleteVehicleBtn.setOnAction(e -> deleteVehicle());
+        backButton.setOnAction(e -> primaryStage.setScene(new Scene(new ManagerDashboard().getRoot(), 800, 600)));
 
-        // Layout
-        HBox inputBox = new HBox(10, plateField, typeField, modelField, rateField, availabilityCheckBox, imagePathField, addVehicleBtn);
+        HBox inputBox = new HBox(10, plateField, typeComboBox, modelField, rateField, availabilityCheckBox, imagePathField, selectImageBtn, addVehicleBtn);
         inputBox.setPadding(new Insets(10));
 
-        HBox buttonBox = new HBox(10, updateVehicleBtn, deleteVehicleBtn);
+        HBox buttonBox = new HBox(10, updateVehicleBtn, deleteVehicleBtn, backButton);
         buttonBox.setPadding(new Insets(10));
 
         VBox layout = new VBox(15, title, vehicleTable, inputBox, buttonBox);
         layout.setPadding(new Insets(20));
 
-        Scene scene = new Scene(layout, 800, 500);
+        Scene scene = new Scene(layout, 900, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    @SuppressWarnings("unchecked")
-    private void setupTableColumns() {
-        TableColumn<Vehicle, String> plateColumn = new TableColumn<>("Plate Number");
-        plateColumn.setCellValueFactory(cellData -> cellData.getValue().plateNumberProperty());
-    
-        TableColumn<Vehicle, String> typeColumn = new TableColumn<>("Type");
-        typeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
-    
-        TableColumn<Vehicle, String> modelColumn = new TableColumn<>("Model");
-        modelColumn.setCellValueFactory(cellData -> cellData.getValue().modelProperty());
-    
-        TableColumn<Vehicle, Double> rateColumn = new TableColumn<>("Rate per Km");
-        rateColumn.setCellValueFactory(cellData -> cellData.getValue().ratePerKmProperty().asObject());
-    
-        TableColumn<Vehicle, Boolean> availabilityColumn = new TableColumn<>("Availability");
-        availabilityColumn.setCellValueFactory(cellData -> cellData.getValue().availabilityProperty());
-    
-        // ✅ Corrected version without type safety warning
-        vehicleTable.getColumns().addAll(plateColumn, typeColumn, modelColumn, rateColumn, availabilityColumn);
-    }
-    
-
-    // Add a new vehicle
-    private void addVehicle(TextField plateField, TextField typeField, TextField modelField, TextField rateField, CheckBox availabilityCheckBox, TextField imagePathField) {
-        try {
-            String plateNumber = plateField.getText();
-            String type = typeField.getText();
-            String model = modelField.getText();
-            double ratePerKm = Double.parseDouble(rateField.getText());
-            boolean availability = availabilityCheckBox.isSelected();
-            String imagePath = imagePathField.getText();
-
-            Vehicle newVehicle = new Vehicle(plateNumber, type, model, ratePerKm, availability, imagePath);
-            vehicleController.addVehicle(newVehicle);
-            refreshTable();
-
-            // Clear input fields after adding
-            plateField.clear();
-            typeField.clear();
-            modelField.clear();
-            rateField.clear();
-            availabilityCheckBox.setSelected(false);
-            imagePathField.clear();
-        } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Rate per Km must be a valid number.");
+    private void addVehicle(String model, String plateNumber, String type, double ratePerKm, boolean availability, String imagePath) {
+        if (model.isEmpty() || plateNumber.isEmpty() || type == null) {
+            showAlert("Error", "All fields are required!");
+            return;
         }
+        vehicleController.addVehicle(model, plateNumber, type, ratePerKm, availability, imagePath);
+        refreshTable();
     }
 
-    // Delete selected vehicle
-    private void deleteVehicle() {
-        Vehicle selected = vehicleTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            vehicleController.deleteVehicle(selected.getPlateNumber());
-            vehicleList.remove(selected);
-        } else {
-            showAlert("No Selection", "Please select a vehicle to delete.");
-        }
-    }
-
-    // Update vehicle availability
-    private void updateVehicleAvailability() {
-        Vehicle selected = vehicleTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            boolean newAvailability = !selected.isAvailable();
-            vehicleController.updateVehicle(selected.getPlateNumber(), newAvailability);
-            refreshTable();
-        } else {
-            showAlert("No Selection", "Please select a vehicle to update.");
-        }
-    }
-
-    // Refresh TableView data
     private void refreshTable() {
-        Platform.runLater(() -> {
-            vehicleList.setAll(vehicleController.getAllVehicles());
-        });
+        Platform.runLater(() -> vehicleList.setAll(vehicleController.getAllVehicles()));
     }
 
-    // Show alert dialogs
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
 }
+
