@@ -4,9 +4,6 @@ import com.megacitycab.dao.VehicleDAO;
 import com.megacitycab.model.Vehicle;
 import javafx.collections.ObservableList;
 
-/**
- * VehicleController - Handles vehicle CRUD operations via DAO.
- */
 public class VehicleController {
     private final VehicleDAO vehicleDAO;
 
@@ -14,8 +11,15 @@ public class VehicleController {
         this.vehicleDAO = new VehicleDAO();
     }
 
-    public void addVehicle(String model, String plateNumber, String type, double ratePerKm, boolean availability, String imagePath) {
-        vehicleDAO.addVehicle(model, plateNumber, type, ratePerKm, availability, imagePath);
+    public void addVehicle(Vehicle vehicle) {
+        vehicleDAO.addVehicle(
+            vehicle.getModel(),
+            vehicle.getPlateNumber(),
+            vehicle.getType(),
+            vehicle.getRatePerKm(),
+            vehicle.isAvailable(),
+            vehicle.getImagePath()
+        );
     }
 
     public ObservableList<Vehicle> getAllVehicles() {
@@ -26,7 +30,11 @@ public class VehicleController {
         vehicleDAO.deleteVehicle(vehicleId);
     }
 
-    public void updateVehicle(String vehicleId, boolean availability) {
-        vehicleDAO.updateVehicle(vehicleId, availability);
+    public void updateVehicle(Vehicle vehicle) {
+        vehicleDAO.updateVehicle(vehicle);
+    }
+
+    public void updateVehicleAvailability(String vehicleId, boolean availability) {
+        vehicleDAO.updateVehicleAvailability(vehicleId, availability);
     }
 }

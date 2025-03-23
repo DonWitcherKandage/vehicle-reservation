@@ -1,6 +1,7 @@
 package com.megacitycab.view;
 
 import com.megacitycab.controller.AuthController;
+import com.megacitycab.controller.ManagerController;
 import com.megacitycab.model.User;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -10,66 +11,95 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class LoginUI extends Application {
-    private AuthController authController = new AuthController();
+    private final AuthController authController = new AuthController();
 
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Login");
+        primaryStage.setResizable(false);
 
+        // UI Components
         Label userLabel = new Label("Username:");
         TextField usernameField = new TextField();
-
+        userLabel.setStyle("-fx-font-weight: bold;");
+        
         Label passLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
-
+        passLabel.setStyle("-fx-font-weight: bold;");
+        
         Button loginBtn = new Button("Login");
         Button backBtn = new Button("Back");
-
         Label statusLabel = new Label();
 
-        // 🎯 Style the buttons for better UI
-        loginBtn.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
-        backBtn.setStyle("-fx-background-color: grey; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
+        // Button Styling
+        loginBtn.setStyle("-fx-background-color: #2E8B57; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
+        backBtn.setStyle("-fx-background-color: #696969; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
 
-        // 🔥 Handle Login Button Click
+        // Login Handler
         loginBtn.setOnAction(e -> {
-            String username = usernameField.getText();
-            String password = passwordField.getText();
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
+
+            // Validation
+            if(username.isEmpty()) {
+                showError("Username Error", "Username cannot be empty!");
+                return;
+            }
+            if(password.isEmpty()) {
+                showError("Password Error", "Password cannot be empty!");
+                return;
+            }
 
             User loggedInUser = authController.login(username, password);
 
             if (loggedInUser != null) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Login Successful");
-                alert.setHeaderText(null);
-                alert.setContentText("Welcome, " + loggedInUser.getUsername() + "!");
-                alert.showAndWait();
-
-                primaryStage.close(); // Close login screen
-                
-                // 🔥 Navigate to the correct dashboard based on role
-                if (loggedInUser.getRole().equalsIgnoreCase("CUSTOMER")) {
-                    new CustomerDashboard().start(new Stage());
-                } else if (loggedInUser.getRole().equalsIgnoreCase("MANAGER")) {
-                    new ManagerDashboard().start(new Stage());
-                }
+                handleSuccessfulLogin(primaryStage, loggedInUser);
             } else {
-                statusLabel.setText("❌ Invalid login! Try again.");
+                statusLabel.setText("❌ Invalid credentials! Check username/password");
+                statusLabel.setStyle("-fx-text-fill: red;");
             }
         });
 
-        // 🔙 Handle Back Button Click
+        // Back Button Handler
         backBtn.setOnAction(e -> {
-            new UserSelectionUI().start(new Stage());  // Go back to user selection screen
             primaryStage.close();
+            new UserSelectionUI().start(new Stage());
         });
 
-        VBox layout = new VBox(10, userLabel, usernameField, passLabel, passwordField, loginBtn, backBtn, statusLabel);
+        // Layout
+        VBox layout = new VBox(10, userLabel, usernameField, passLabel, passwordField, 
+                              loginBtn, backBtn, statusLabel);
         layout.setPadding(new Insets(20));
+        layout.setStyle("-fx-background-color: #F5F5F5;");
 
-        Scene scene = new Scene(layout, 400, 300);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(layout, 400, 350));
         primaryStage.show();
+    }
+
+    private void handleSuccessfulLogin(Stage loginStage, User user) {
+        loginStage.close();
+        
+        try {
+            Stage dashboardStage = new Stage();
+            if (user.getRole().equalsIgnoreCase("MANAGER")) {
+                ManagerController controller = new ManagerController(dashboardStage);
+                new ManagerDashboard(controller).start(dashboardStage);
+            } else if (user.getRole().equalsIgnoreCase("CUSTOMER")) {
+                new CustomerDashboard().start(new Stage());
+            } else {
+                showError("Role Error", "Unknown user role: " + user.getRole());
+            }
+        } catch (Exception e) {
+            showError("Navigation Error", "Failed to open dashboard: " + e.getMessage());
+        }
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {

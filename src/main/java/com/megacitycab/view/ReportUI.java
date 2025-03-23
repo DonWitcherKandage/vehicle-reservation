@@ -1,39 +1,41 @@
 package com.megacitycab.view;
 
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class ReportUI extends Application {
+public class ReportUI {
+    private final Stage previousStage;
 
-    @Override
+    public ReportUI(Stage previousStage) {
+        this.previousStage = previousStage;
+    }
+
     public void start(Stage primaryStage) {
         VBox root = new VBox(10);
 
-        // Buttons
-        Button bookingReportButton = new Button("Generate Booking Report");
-        Button vehicleReportButton = new Button("Generate Vehicle Report");
-        Button driverReportButton = new Button("Generate Driver Report");
+        // Report Buttons
+        Button bookingReportBtn = new Button("Generate Booking Report");
+        Button vehicleReportBtn = new Button("Generate Vehicle Report");
+        Button driverReportBtn = new Button("Generate Driver Report");
+        Button backBtn = new Button("⬅ Back");
 
-        // Add components to layout
-        root.getChildren().addAll(bookingReportButton, vehicleReportButton, driverReportButton);
+        // Styling
+        bookingReportBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        vehicleReportBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+        driverReportBtn.setStyle("-fx-background-color: #9C27B0; -fx-text-fill: white;");
+        backBtn.setStyle("-fx-background-color: #666; -fx-text-fill: white;");
 
-        // Event Handlers
-        bookingReportButton.setOnAction(e -> {
-            // Generate Booking Report
+        // Button Actions
+        backBtn.setOnAction(e -> {
+            primaryStage.close();
+            previousStage.show();
         });
 
-        vehicleReportButton.setOnAction(e -> {
-            // Generate Vehicle Report
-        });
+        root.getChildren().addAll(bookingReportBtn, vehicleReportBtn, driverReportBtn, backBtn);
 
-        driverReportButton.setOnAction(e -> {
-            // Generate Driver Report
-        });
-
-        // Set Scene
+        // Scene Setup
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setTitle("Generate Reports");
         primaryStage.setScene(scene);
