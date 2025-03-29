@@ -1,28 +1,42 @@
 package com.megacitycab.model;
 
-/**
- * Customer class extends User and adds customer-specific attributes.
- */
+import javafx.beans.property.*;
+
 public class Customer extends User {
-    private String address;
-    private String nic;
-    private String phoneNumber;
+    private final IntegerProperty userId;
+    private final StringProperty username;
+    private final StringProperty address;
+    private final StringProperty nic;
+    private final StringProperty phoneNumber;
 
     // ✅ Correct constructor with int userId
     public Customer(int userId, String username, String password, String address, String nic, String phoneNumber) {
         super(userId, username, password, "CUSTOMER");
-        this.address = address;
-        this.nic = nic;
-        this.phoneNumber = phoneNumber;
+        this.userId = new SimpleIntegerProperty(userId);
+        this.username = new SimpleStringProperty(username);
+        this.address = new SimpleStringProperty(address);
+        this.nic = new SimpleStringProperty(nic);
+        this.phoneNumber = new SimpleStringProperty(phoneNumber);
     }
 
     // Getters
-    public String getAddress() { return address; }
-    public String getNic() { return nic; }
-    public String getPhoneNumber() { return phoneNumber; }
+    public int getUserId() { return userId.get(); }
+    public String getUsername() { return username.get(); }
+    public String getAddress() { return address.get(); }
+    public String getNic() { return nic.get(); }
+    public String getPhoneNumber() { return phoneNumber.get(); }
 
     // Setters
-    public void setAddress(String address) { this.address = address; }
-    public void setNic(String nic) { this.nic = nic; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public void setUserId(int userId) { this.userId.set(userId); }
+    public void setUsername(String username) { this.username.set(username); }
+    public void setAddress(String address) { this.address.set(address); }
+    public void setNic(String nic) { this.nic.set(nic); }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber.set(phoneNumber); }
+
+    // JavaFX Property Getters
+    public IntegerProperty userIdProperty() { return userId; }
+    public StringProperty usernameProperty() { return username; }
+    public StringProperty addressProperty() { return address; }
+    public StringProperty nicProperty() { return nic; }
+    public StringProperty phoneNumberProperty() { return phoneNumber; }
 }
