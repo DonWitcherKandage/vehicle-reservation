@@ -12,7 +12,11 @@ public class BookingDAO {
 
     public BookingDAO() {
         this.connection = DatabaseManager.getInstance().getConnection();
+        if (this.connection == null) {
+            System.err.println("ERROR: Database connection failed");
+        }
     }
+
 
     public void addBooking(Booking booking) {
         String query = "INSERT INTO bookings (destination, date, time, vehicleType, price, status, customerId) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -29,6 +33,32 @@ public class BookingDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Booking> getBookingsForCustomer(int customerId) {
+        List<Booking> bookings = new ArrayList<>();
+        String query = "SELECT * FROM bookings WHERE customerId = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, customerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(new Booking(
+                            rs.getInt("bookingId"),
+                            rs.getString("destination"),
+                            rs.getString("date"),
+                            rs.getString("time"),
+                            rs.getString("vehicleType"),
+                            rs.getDouble("price"),
+                            rs.getString("status"),
+                            rs.getInt("customerId")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookings;
     }
 
     public List<Booking> getPendingBookings() {
