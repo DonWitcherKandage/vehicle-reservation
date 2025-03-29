@@ -10,16 +10,21 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * Registration UI for new customers.
+ * Registration UI for new users (customers or managers).
  */
 public class RegisterUI extends Application {
     private final AuthController authController = new AuthController();
+    private final String role;
+
+    public RegisterUI(String role) {
+        this.role = role;
+    }
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Register as Customer");
+        primaryStage.setTitle("Register as " + role);
 
-        Label titleLabel = new Label("MegaCity Cab - Register");
+        Label titleLabel = new Label("MegaCity Cab - Register as " + role);
         titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         TextField usernameField = new TextField();
@@ -54,11 +59,13 @@ public class RegisterUI extends Application {
             if (username.isEmpty() || password.isEmpty() || address.isEmpty() || nic.isEmpty() || phone.isEmpty()) {
                 showErrorMessage("All fields must be filled out!");
             } else {
-                boolean success = authController.registerCustomer(username, password, address, nic, phone);
+                boolean success = role.equals("CUSTOMER")
+                        ? authController.registerCustomer(username, password, address, nic, phone)
+                        : authController.registerManager(username, password, address, nic, phone);
                 if (success) {
                     showSuccessMessage("Registration Successful!");
                     primaryStage.close();
-                    new LoginUI().start(new Stage()); // ✅ Redirect to login
+                    new LoginUI(role).start(new Stage()); // ✅ Redirect to login with role
                 } else {
                     showErrorMessage("Registration failed. Try again.");
                 }

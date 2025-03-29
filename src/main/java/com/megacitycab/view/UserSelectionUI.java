@@ -18,31 +18,45 @@ public class UserSelectionUI extends Application {
 
         Button customerBtn = new Button("Customer Login");
         Button managerBtn = new Button("Manager Login");
+        Button registerCustomerBtn = new Button("Register as Customer");
+        Button registerManagerBtn = new Button("Register as Manager");
         Button exitBtn = new Button("Exit");
 
         // ✅ Style buttons
         styleButton(customerBtn);
         styleButton(managerBtn);
+        styleButton(registerCustomerBtn);
+        styleButton(registerManagerBtn);
         styleExitButton(exitBtn);
 
         // ✅ Button Actions
         customerBtn.setOnAction(e -> {
-            new LoginUI().start(new Stage());
+            new LoginUI("CUSTOMER").start(new Stage());
             primaryStage.close();
         });
 
         managerBtn.setOnAction(e -> {
-            new LoginUI().start(new Stage());
+            new LoginUI("MANAGER").start(new Stage());
+            primaryStage.close();
+        });
+
+        registerCustomerBtn.setOnAction(e -> {
+            new RegisterUI("CUSTOMER").start(new Stage());
+            primaryStage.close();
+        });
+
+        registerManagerBtn.setOnAction(e -> {
+            new RegisterUI("MANAGER").start(new Stage());
             primaryStage.close();
         });
 
         exitBtn.setOnAction(e -> primaryStage.close());
 
-        VBox layout = new VBox(20, customerBtn, managerBtn, exitBtn);
+        VBox layout = new VBox(15, customerBtn, managerBtn, registerCustomerBtn, registerManagerBtn, exitBtn);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
 
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 450, 350); // Make dialog a little bigger
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -51,14 +65,14 @@ public class UserSelectionUI extends Application {
      * Styles buttons for consistency.
      */
     private void styleButton(Button button) {
-        button.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px; -fx-padding: 10px;");
+        button.setStyle("-fx-background-color: #4682B4; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 180px; -fx-padding: 8px;");
     }
 
     /**
      * Styles the exit button with red color.
      */
     private void styleExitButton(Button button) {
-        button.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px; -fx-padding: 10px;");
+        button.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 180px; -fx-padding: 8px;");
     }
 
     public static void main(String[] args) {

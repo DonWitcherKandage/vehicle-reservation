@@ -25,15 +25,15 @@ public class ManageVehiclesUI {
     private final VehicleController vehicleController;
     private final ObservableList<Vehicle> vehicleList;
     private final TableView<Vehicle> vehicleTable = new TableView<>();
-    private final Stage previousStage;
+    private final Stage managerDashboardStage;
 
     private TextField modelField, plateField, rateField, imagePathField;
     private ComboBox<String> typeComboBox;
     private CheckBox availabilityCheckBox;
 
-    public ManageVehiclesUI(VehicleController vehicleController, Stage previousStage) {
+    public ManageVehiclesUI(VehicleController vehicleController, Stage managerDashboardStage) {
         this.vehicleController = vehicleController;
-        this.previousStage = previousStage;
+        this.managerDashboardStage = managerDashboardStage;
         this.vehicleList = FXCollections.observableArrayList(vehicleController.getAllVehicles());
     }
 
@@ -44,7 +44,7 @@ public class ManageVehiclesUI {
 
         setupTable();
         initializeInputFields();
-        
+
         Button selectImageBtn = new Button("Select Image");
         selectImageBtn.setOnAction(e -> handleImageSelection(primaryStage));
 
@@ -55,9 +55,9 @@ public class ManageVehiclesUI {
 
         setupButtonActions(addVehicleBtn, updateVehicleBtn, deleteVehicleBtn, backButton, primaryStage);
 
-        HBox inputBox = new HBox(10, 
-            modelField, plateField, typeComboBox, rateField, 
-            availabilityCheckBox, imagePathField, selectImageBtn, addVehicleBtn
+        HBox inputBox = new HBox(10,
+                modelField, plateField, typeComboBox, rateField,
+                availabilityCheckBox, imagePathField, selectImageBtn, addVehicleBtn
         );
         inputBox.setPadding(new Insets(10));
 
@@ -76,7 +76,7 @@ public class ManageVehiclesUI {
         setupTableColumns();
         vehicleTable.setItems(vehicleList);
         vehicleTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-        
+
         vehicleTable.setRowFactory(tv -> {
             TableRow<Vehicle> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -110,9 +110,9 @@ public class ManageVehiclesUI {
         TableColumn<Vehicle, String> imageCol = new TableColumn<>("Image");
         imageCol.setCellValueFactory(new PropertyValueFactory<>("imagePath"));
 
-        vehicleTable.getColumns().addAll(List.of(
-            idCol, modelCol, plateCol, typeCol, rateCol, availableCol, imageCol
-        ));
+        vehicleTable.getColumns().addAll(
+                idCol, modelCol, plateCol, typeCol, rateCol, availableCol, imageCol
+        );
     }
 
     private void initializeInputFields() {
@@ -146,22 +146,22 @@ public class ManageVehiclesUI {
         delete.setOnAction(e -> handleDeleteVehicle());
         back.setOnAction(e -> {
             primaryStage.close();
-            previousStage.show();
+            managerDashboardStage.show();
         });
     }
 
     private void handleAddVehicle() {
         try {
             Vehicle vehicle = new Vehicle(
-                UUID.randomUUID().toString(),
-                modelField.getText(),
-                plateField.getText(),
-                typeComboBox.getValue(),
-                Double.parseDouble(rateField.getText()),
-                availabilityCheckBox.isSelected(),
-                imagePathField.getText()
+                    UUID.randomUUID().toString(),
+                    modelField.getText(),
+                    plateField.getText(),
+                    typeComboBox.getValue(),
+                    Double.parseDouble(rateField.getText()),
+                    availabilityCheckBox.isSelected(),
+                    imagePathField.getText()
             );
-            
+
             vehicleController.addVehicle(vehicle);
             clearFields();
             refreshTable();
@@ -182,13 +182,13 @@ public class ManageVehiclesUI {
 
         try {
             Vehicle updatedVehicle = new Vehicle(
-                selected.getId(),
-                modelField.getText(),
-                plateField.getText(),
-                typeComboBox.getValue(),
-                Double.parseDouble(rateField.getText()),
-                availabilityCheckBox.isSelected(),
-                imagePathField.getText()
+                    selected.getId(),
+                    modelField.getText(),
+                    plateField.getText(),
+                    typeComboBox.getValue(),
+                    Double.parseDouble(rateField.getText()),
+                    availabilityCheckBox.isSelected(),
+                    imagePathField.getText()
             );
 
             vehicleController.updateVehicle(updatedVehicle);
@@ -253,15 +253,15 @@ public class ManageVehiclesUI {
         updateBtn.setOnAction(e -> {
             try {
                 Vehicle updatedVehicle = new Vehicle(
-                    vehicle.getId(),
-                    modelField.getText(),
-                    plateField.getText(),
-                    typeCombo.getValue(),
-                    Double.parseDouble(rateField.getText()),
-                    availableCheck.isSelected(),
-                    vehicle.getImagePath()
+                        vehicle.getId(),
+                        modelField.getText(),
+                        plateField.getText(),
+                        typeCombo.getValue(),
+                        Double.parseDouble(rateField.getText()),
+                        availableCheck.isSelected(),
+                        vehicle.getImagePath()
                 );
-                
+
                 vehicleController.updateVehicle(updatedVehicle);
                 refreshTable();
                 detailStage.close();
@@ -281,13 +281,13 @@ public class ManageVehiclesUI {
         });
 
         layout.getChildren().addAll(
-            imageView,
-            new Label("Model:"), modelField,
-            new Label("Plate:"), plateField,
-            new Label("Type:"), typeCombo,
-            new Label("Rate/km:"), rateField,
-            availableCheck,
-            new HBox(10, updateBtn, deleteBtn)
+                imageView,
+                new Label("Model:"), modelField,
+                new Label("Plate:"), plateField,
+                new Label("Type:"), typeCombo,
+                new Label("Rate/km:"), rateField,
+                availableCheck,
+                new HBox(10, updateBtn, deleteBtn)
         );
 
         detailStage.setScene(new Scene(layout, 400, 600));
@@ -298,7 +298,7 @@ public class ManageVehiclesUI {
     private void handleImageSelection(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
         File file = fileChooser.showOpenDialog(primaryStage);
         if (file != null) {

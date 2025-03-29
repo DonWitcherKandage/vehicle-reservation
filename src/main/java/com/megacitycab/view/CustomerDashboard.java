@@ -1,5 +1,6 @@
 package com.megacitycab.view;
 
+import com.megacitycab.model.Customer;
 import com.megacitycab.util.BookingNotifier;
 import com.megacitycab.util.CustomerObserver;
 import javafx.application.Application;
@@ -19,6 +20,11 @@ import javafx.stage.Stage;
 public class CustomerDashboard extends Application {
     private ObservableList<String> notificationList = FXCollections.observableArrayList();
     private BookingNotifier notifier;
+    private Customer loggedInCustomer;
+
+    public CustomerDashboard(Customer loggedInCustomer) {
+        this.loggedInCustomer = loggedInCustomer;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -52,10 +58,27 @@ public class CustomerDashboard extends Application {
         notifier.addObserver(new CustomerObserver(notificationList));
 
         // ✅ Button Actions
-        bookRideBtn.setOnAction(e -> new BookingUI().start(new Stage()));
-        viewBookingsBtn.setOnAction(e -> new ViewBookingsUI().start(new Stage()));
+        // In CustomerDashboard class, modify the bookRideBtn action
+        bookRideBtn.setOnAction(e -> {
+            BookingUI bookingUI = new BookingUI(loggedInCustomer.getUserId());
+            bookingUI.start(new Stage());
+        });
+        viewBookingsBtn.setOnAction(e -> {
+            try {
+                int userId = loggedInCustomer.getUserId();
+                System.out.println("Opening ViewBookingsUI with user ID: " + userId);
+                new ViewBookingsUI(userId).start(new Stage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Failed to Open Bookings");
+                alert.setContentText("Error: " + ex.getMessage());
+                alert.showAndWait();
+            }
+        });
         ongoingTripsBtn.setOnAction(e -> new OngoingTripsUI().start(new Stage()));
-        profileBtn.setOnAction(e -> new ProfileUI().start(new Stage()));
+        profileBtn.setOnAction(e -> new ProfileUI(loggedInCustomer).start(new Stage()));
 
         logoutBtn.setOnAction(e -> {
             new UserSelectionUI().start(new Stage()); // Takes user back to selection screen
@@ -90,6 +113,7 @@ public class CustomerDashboard extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        Customer sampleCustomer = new Customer(1, "john_doe", "password123", "123 Street", "123456789", "555-5555");
+        new CustomerDashboard(sampleCustomer).start(new Stage());
     }
 }

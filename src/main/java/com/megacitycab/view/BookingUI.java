@@ -10,12 +10,30 @@ import javafx.stage.Stage;
 
 public class BookingUI extends Application {
     private BookingController bookingController;
+    private int customerId;
+
+    public BookingUI(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public BookingUI() {
+    }
+
+    // Method to set customer ID (for use with no-arg constructor)
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
 
     @Override
     public void start(Stage primaryStage) {
+        // Log the customer ID to verify it's correct
+        System.out.println("BookingUI started with customer ID: " + customerId);
+
         bookingController = new BookingController();
 
         primaryStage.setTitle("Book a Ride");
+
+        // Rest of your code...
 
         Label destinationLabel = new Label("Destination:");
         TextField destinationField = new TextField();
@@ -49,7 +67,10 @@ public class BookingUI extends Application {
             String vehicleType = vehicleTypeBox.getValue();
             double price = Double.parseDouble(priceValue.getText().replace("Rs. ", ""));
 
-            bookingController.addBooking(destination, date, time, vehicleType, price, 1); // Example Customer ID
+            // Log before saving to confirm the customer ID
+            System.out.println("Saving booking for customer ID: " + customerId);
+
+            bookingController.addBooking(destination, date, time, vehicleType, price, customerId);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Booking Confirmed");

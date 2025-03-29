@@ -51,4 +51,4 @@ public class ManagerDashboard {
         btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
         return btn;
     }
-}
+} 

@@ -2,101 +2,104 @@ package com.megacitycab.view;
 
 import com.megacitycab.controller.AuthController;
 import com.megacitycab.controller.ManagerController;
+import com.megacitycab.model.Customer;
+import com.megacitycab.model.Manager;
 import com.megacitycab.model.User;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Handles user login.
+ */
 public class LoginUI extends Application {
     private final AuthController authController = new AuthController();
+    private final String role;
+
+    public LoginUI(String role) {
+        this.role = role;
+    }
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Login");
-        primaryStage.setResizable(false);
+        primaryStage.setTitle(role + " Login");
 
-        // UI Components
-        Label userLabel = new Label("Username:");
         TextField usernameField = new TextField();
-        userLabel.setStyle("-fx-font-weight: bold;");
-        
-        Label passLabel = new Label("Password:");
+        usernameField.setPromptText("Enter Username");
+
         PasswordField passwordField = new PasswordField();
-        passLabel.setStyle("-fx-font-weight: bold;");
-        
+        passwordField.setPromptText("Enter Password");
+
         Button loginBtn = new Button("Login");
         Button backBtn = new Button("Back");
-        Label statusLabel = new Label();
 
-        // Button Styling
-        loginBtn.setStyle("-fx-background-color: #2E8B57; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
-        backBtn.setStyle("-fx-background-color: #696969; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 200px;");
+        styleButton(loginBtn);
+        styleButton(backBtn);
 
-        // Login Handler
+        // ✅ Handle Login
         loginBtn.setOnAction(e -> {
-            String username = usernameField.getText().trim();
-            String password = passwordField.getText().trim();
+            String username = usernameField.getText();
+            String password = passwordField.getText();
 
-            // Validation
-            if(username.isEmpty()) {
-                showError("Username Error", "Username cannot be empty!");
-                return;
-            }
-            if(password.isEmpty()) {
-                showError("Password Error", "Password cannot be empty!");
-                return;
-            }
-
-            User loggedInUser = authController.login(username, password);
-
-            if (loggedInUser != null) {
-                handleSuccessfulLogin(primaryStage, loggedInUser);
+            User user = authController.login(username, password, role);
+            if (user != null) {
+                showSuccessMessage("Login Successful!");
+                primaryStage.close();
+                // Redirect to dashboard based on role
+                if (role.equalsIgnoreCase("CUSTOMER")) {
+                    new CustomerDashboard((Customer) user).start(new Stage());
+                } else if (role.equalsIgnoreCase("MANAGER")) {
+                    ManagerController managerController = new ManagerController(new Stage());
+                    new ManagerDashboard(managerController).start(new Stage());
+                }
             } else {
-                statusLabel.setText("❌ Invalid credentials! Check username/password");
-                statusLabel.setStyle("-fx-text-fill: red;");
+                showErrorMessage("Invalid username or password. Try again.");
             }
         });
 
-        // Back Button Handler
+        // ✅ Handle Back Button (Return to User Selection)
         backBtn.setOnAction(e -> {
-            primaryStage.close();
             new UserSelectionUI().start(new Stage());
+            primaryStage.close();
         });
 
-        // Layout
-        VBox layout = new VBox(10, userLabel, usernameField, passLabel, passwordField, 
-                              loginBtn, backBtn, statusLabel);
+        VBox layout = new VBox(15, usernameField, passwordField, loginBtn, backBtn);
+        layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
-        layout.setStyle("-fx-background-color: #F5F5F5;");
 
-        primaryStage.setScene(new Scene(layout, 400, 350));
+        Scene scene = new Scene(layout, 400, 300);
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void handleSuccessfulLogin(Stage loginStage, User user) {
-        loginStage.close();
-        
-        try {
-            Stage dashboardStage = new Stage();
-            if (user.getRole().equalsIgnoreCase("MANAGER")) {
-                ManagerController controller = new ManagerController(dashboardStage);
-                new ManagerDashboard(controller).start(dashboardStage);
-            } else if (user.getRole().equalsIgnoreCase("CUSTOMER")) {
-                new CustomerDashboard().start(new Stage());
-            } else {
-                showError("Role Error", "Unknown user role: " + user.getRole());
-            }
-        } catch (Exception e) {
-            showError("Navigation Error", "Failed to open dashboard: " + e.getMessage());
-        }
+    /**
+     * Styles buttons for consistency.
+     */
+    private void styleButton(Button button) {
+        button.setStyle("-fx-font-size: 14px; -fx-pref-width: 200px; -fx-padding: 10px;");
     }
 
-    private void showError(String title, String message) {
+    /**
+     * Shows a success message popup.
+     */
+    private void showSuccessMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * Shows an error message popup.
+     */
+    private void showErrorMessage(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
+        alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
