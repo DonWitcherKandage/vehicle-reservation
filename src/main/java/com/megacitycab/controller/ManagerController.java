@@ -16,22 +16,37 @@ public class ManagerController {
     }
 
     public void logout() {
-        new LoginUI().start(new Stage());
-        managerStage.close();
+        managerStage.close(); // Close first, then create new login UI
+        new LoginUI("MANAGER").start(new Stage());
     }
 
     public void manageVehicles() {
-        new ManageVehiclesUI(vehicleController, managerStage).start(new Stage());
-        managerStage.hide();
+        managerStage.hide(); // Hide before creating new UI
+        Stage vehicleStage = new Stage();
+        vehicleStage.setOnCloseRequest(e -> {
+            managerStage.show();
+            managerStage.toFront();
+        });
+        new ManageVehiclesUI(vehicleController, managerStage).start(vehicleStage);
     }
 
     public void manageDrivers() {
-        new ManageDriversUI(managerStage).start(new Stage());
-        managerStage.hide();
+        managerStage.hide(); // Hide before creating new UI
+        Stage driversStage = new Stage();
+        driversStage.setOnCloseRequest(e -> {
+            managerStage.show();
+            managerStage.toFront();
+        });
+        new ManageDriversUI(managerStage).start(driversStage);
     }
 
     public void generateReport() {
-        new ReportUI(managerStage).start(new Stage());
-        managerStage.hide();
+        managerStage.hide(); // Hide before creating new UI
+        Stage reportStage = new Stage();
+        reportStage.setOnCloseRequest(e -> {
+            managerStage.show();
+            managerStage.toFront();
+        });
+        new ReportUI(managerStage).start(reportStage);
     }
 }

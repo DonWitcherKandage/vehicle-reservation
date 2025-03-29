@@ -17,6 +17,10 @@ public class BookingController {
         bookingDAO.addBooking(booking);
     }
 
+    public List<Booking> getBookingsForCustomer(int customerId) {
+        return bookingDAO.getBookingsForCustomer(customerId);
+    }
+
     public List<Booking> getPendingBookings() {
         return bookingDAO.getPendingBookings();
     }

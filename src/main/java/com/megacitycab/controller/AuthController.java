@@ -1,6 +1,8 @@
 package com.megacitycab.controller;
 
 import com.megacitycab.dao.UserDAO;
+import com.megacitycab.model.Customer;
+import com.megacitycab.model.Manager;
 import com.megacitycab.model.User;
 
 /**
@@ -14,16 +16,31 @@ public class AuthController {
     }
 
     /**
-     * ✅ Logs in a user and returns User object.
+     * Logs in a user and returns User object.
      */
-    public User login(String username, String password) {
-        return userDAO.login(username, password);
+    public User login(String username, String password, String role) {
+        User user;
+        if (role.equalsIgnoreCase("CUSTOMER")) {
+            user = userDAO.loginCustomer(username, password);
+        } else if (role.equalsIgnoreCase("MANAGER")) {
+            user = userDAO.loginManager(username, password);
+        } else {
+            user = null;
+        }
+        return user;
     }
 
     /**
-     * ✅ Registers a new customer.
+     * Registers a new customer.
      */
     public boolean registerCustomer(String username, String password, String address, String nic, String phoneNumber) {
         return userDAO.registerCustomer(username, password, address, nic, phoneNumber);
+    }
+
+    /**
+     * Registers a new manager.
+     */
+    public boolean registerManager(String username, String password, String address, String nic, String phoneNumber) {
+        return userDAO.registerManager(username, password, address, nic, phoneNumber);
     }
 }
